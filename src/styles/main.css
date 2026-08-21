@@ -1,0 +1,418 @@
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,400;1,500&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap');
+
+:root {
+  --bg-primary: #FBF9F5;
+  --bg-secondary: #141A17;
+  --bg-card: #FFFFFF;
+  --text-primary: #19221C;
+  --text-muted: #6E726E;
+  --text-light: #FBF9F5;
+  --accent-gold: #C5A059;
+  --accent-gold-hover: #A8833E;
+  --accent-light-gold: #F4EAD3;
+  --border-light: rgba(25, 34, 28, 0.09);
+  --border-gold: rgba(197, 160, 89, 0.35);
+  --glass-bg: rgba(251, 249, 245, 0.85);
+  --glass-dark: rgba(20, 26, 23, 0.85);
+  --shadow-soft: 0 15px 35px -10px rgba(25, 34, 28, 0.06);
+  --shadow-hover: 0 25px 50px -12px rgba(25, 34, 28, 0.12);
+  --shadow-drawer: -10px 0 40px rgba(0, 0, 0, 0.15);
+
+  --font-serif: 'Cormorant Garamond', Georgia, serif;
+  --font-sans: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+
+  --transition-smooth: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  /* Same easing as --transition-smooth but excludes opacity: a browser CSS transition racing
+     GSAP's own per-frame writes to opacity makes GSAP's tween visually stick at its starting
+     value for the whole run (confirmed on the hero CTA — see heroAnimations.js). `transform`
+     doesn't have this problem (GSAP batches it into one write/frame), so it stays included —
+     hover lifts/scales still transition smoothly. Use this instead of --transition-smooth on any
+     element GSAP also animates opacity on. */
+  --transition-hover: background-color 0.4s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.4s cubic-bezier(0.16, 1, 0.3, 1), color 0.4s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.4s cubic-bezier(0.16, 1, 0.3, 1), transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  --radius-sm: 6px;
+  --radius-md: 12px;
+  --radius-lg: 20px;
+  --radius-full: 9999px;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  font-family: var(--font-sans);
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  font-size: 16px;
+  line-height: 1.6;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+body {
+  overflow-x: hidden;
+  position: relative;
+}
+
+/* 1. Cinematic Intro Loader Screen */
+.cinematic-loader {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background-color: var(--bg-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+}
+
+.cinematic-loader.loaded {
+  pointer-events: none;
+}
+
+.loader-inner {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.loader-logo {
+  width: 70px;
+  height: 70px;
+  margin-bottom: 1.5rem;
+}
+
+.loader-brand-name {
+  font-family: var(--font-serif);
+  font-size: 1.8rem;
+  letter-spacing: 0.15em;
+  color: var(--text-primary);
+  margin-bottom: 2rem;
+}
+
+.loader-progress-bg {
+  width: 220px;
+  height: 3px;
+  background: var(--border-light);
+  border-radius: var(--radius-full);
+  overflow: hidden;
+  margin-bottom: 1rem;
+}
+
+.loader-progress-fill {
+  height: 100%;
+  width: 0%;
+  background: var(--accent-gold);
+  transition: width 0.1s linear;
+}
+
+.loader-count {
+  font-size: 0.85rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  color: var(--accent-gold);
+}
+
+/* 2. Custom Luxury Cursor */
+.custom-cursor-dot {
+  position: fixed;
+  top: -4px;
+  left: -4px;
+  width: 8px;
+  height: 8px;
+  background: var(--accent-gold);
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 10000;
+  transition: scale 0.2s ease, background 0.2s ease;
+}
+
+.custom-cursor-ring {
+  position: fixed;
+  top: -20px;
+  left: -20px;
+  width: 40px;
+  height: 40px;
+  border: 1px solid var(--accent-gold);
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 9999;
+  transition: scale 0.3s ease, border-color 0.3s ease, background 0.3s ease;
+}
+
+.custom-cursor-ring.cursor-hover {
+  scale: 1.6;
+  background: rgba(197, 160, 89, 0.1);
+  border-color: var(--text-primary);
+}
+
+.custom-cursor-dot.cursor-hover {
+  scale: 0.5;
+  background: var(--text-primary);
+}
+
+@media (max-width: 768px) {
+
+  .custom-cursor-dot,
+  .custom-cursor-ring {
+    display: none !important;
+  }
+}
+
+/* Typography Base */
+h1,
+h2,
+h3,
+h4,
+.font-serif {
+  font-family: var(--font-serif);
+  font-weight: 400;
+  line-height: 1.15;
+}
+
+h1 {
+  font-size: clamp(2.8rem, 5.5vw, 5.2rem);
+  letter-spacing: -0.02em;
+}
+
+h2 {
+  font-size: clamp(2.2rem, 4vw, 3.6rem);
+  letter-spacing: -0.01em;
+}
+
+h3 {
+  font-size: clamp(1.5rem, 2.5vw, 2.2rem);
+}
+
+p {
+  color: var(--text-muted);
+  font-weight: 300;
+  font-size: 1.05rem;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+  transition: var(--transition-smooth);
+}
+
+button {
+  font-family: inherit;
+  cursor: pointer;
+  border: none;
+  background: none;
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* Title Line Wrap for Split Mask Reveals */
+.title-line-wrap {
+  display: block;
+  overflow: hidden;
+}
+
+.title-line {
+  display: inline-block;
+  will-change: transform, opacity;
+}
+
+/* Layout Utilities */
+.container {
+  width: 100%;
+  max-width: 1360px;
+  margin: 0 auto;
+  padding: 0 2rem;
+}
+
+@media screen and (max-width: 1300px) {
+  .container {
+    max-width: 1160px;
+  }
+}
+
+.section-padding {
+  padding: 5rem 0;
+}
+
+@media (max-width: 768px) {
+  .section-padding {
+    padding: 4.5rem 0;
+  }
+
+  .container {
+    padding: 0 1.25rem;
+  }
+}
+
+/* Global Organic SVG Background Layer */
+.global-bg-vector {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 0;
+  overflow: hidden;
+}
+
+.global-bg-vector svg {
+  width: 100%;
+  height: auto;
+  min-height: 100%;
+}
+
+/* Atmospheric Dewdrop Particles */
+.atmospheric-particles {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
+  overflow: hidden;
+}
+
+/* Buttons & Badges */
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1rem 2.25rem;
+  background-color: var(--text-primary);
+  color: var(--bg-primary);
+  border-radius: var(--radius-full);
+  font-size: 0.875rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  transition: var(--transition-hover);
+  will-change: transform;
+}
+
+.btn-primary:hover {
+  background-color: var(--accent-gold);
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px rgba(197, 160, 89, 0.3);
+}
+
+.btn-outline {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.95rem 2.15rem;
+  background-color: transparent;
+  color: var(--text-primary);
+  border: 1px solid var(--border-gold);
+  border-radius: var(--radius-full);
+  font-size: 0.875rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  transition: var(--transition-hover);
+  will-change: transform;
+}
+
+.btn-outline:hover {
+  border-color: var(--text-primary);
+  background-color: rgba(25, 34, 28, 0.04);
+}
+
+/* Rotating Circular Text Badge */
+.badge-circle {
+  position: relative;
+  width: 130px;
+  height: 130px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  cursor: pointer;
+  user-select: none;
+  will-change: transform;
+}
+
+.badge-circle-bg {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: var(--text-primary);
+  transition: var(--transition-smooth);
+}
+
+.badge-circle:hover .badge-circle-bg {
+  background: var(--accent-gold);
+  transform: scale(1.05);
+}
+
+.badge-circle-text {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  animation: spinSlow 22s linear infinite;
+}
+
+.badge-circle-text svg {
+  width: 100%;
+  height: 100%;
+}
+
+.badge-circle-center {
+  position: relative;
+  z-index: 2;
+  color: var(--bg-primary);
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  text-align: center;
+  padding: 0.5rem;
+}
+
+@keyframes spinSlow {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Section Header Component */
+.section-header {
+  margin-bottom: 4rem;
+}
+
+.sub-section-header {
+  margin-bottom: 1rem;
+}
+
+.section-header.text-center {
+  text-align: center;
+}
+
+.section-header .tagline {
+  display: inline-block;
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--accent-gold);
+  margin-bottom: 0.75rem;
+}
+
+.section-header h2 {
+  max-width: 750px;
+}
+
+.section-header.text-center h2 {
+  margin: 0 auto;
+}
